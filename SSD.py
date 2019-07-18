@@ -12,19 +12,20 @@ def my_ssd(left_image, right_image, kernel, max_offset,compostion):
     depth.shape = h, w
     kernel_half = int(kernel/2)
     offset_adjust = 255 / max_offset
-    for y in range(kernel_half, h-kernel_half):
-        for x in range(kernel_half, w-kernel_half):
-            ssd_reserved = 65534
-            best_offset = 0
-            for offset in range(max_offset):
-                ssd = 0
-                for v in range(-kernel_half, kernel_half):
-                    for u in range(-kernel_half, kernel_half):
-                        ssd_temp = int(left[(y+v), (x+u)])-int(right[(y+v), ((x+u)-offset)])
-                        ssd += ssd_temp*ssd_temp
-                if ssd < ssd_reserved:
-                    ssd_reserved = ssd
-                    best_offset = offset
-            depth[y, x] = best_offset*offset_adjust
+    for i in range(0,len(compostion)):
+        for j in range(0, len(compostion[i])):
+            if compostion[i][j][0]<(h-kernel_half)& kernel_half < compostion[i][j][0]& compostion[i][j][1]<(w-kernel_half)& kernel_half < compostion[i][j][1]:
+                ssd_reserved = 65534
+                best_offset = 0
+                for offset in range(max_offset):
+                    ssd = 0
+                    for v in range(-kernel_half, kernel_half):
+                        for u in range(-kernel_half, kernel_half):
+                            ssd_temp = int(left[(compostion[i][j][0] + v), (compostion[i][j][1] + u)]) - int(right[(compostion[i][j][0] + v), ((compostion[i][j][1] + u) - offset)])
+                            ssd += ssd_temp * ssd_temp
+                    if ssd < ssd_reserved:
+                        ssd_reserved = ssd
+                        best_offset = offset
+                depth[compostion[i][j][0], compostion[i][j][1]] = best_offset * offset_adjust
 
     Image.fromarray(depth).save('depth.png')

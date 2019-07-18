@@ -37,7 +37,7 @@ fig = plt.figure()
 ax = Axes3D(fig)
 ax.plot_surface(x, y, z, rstride=1, cstride=1, cmap=cm.viridis)
 plt.show()
-SSD.my_ssd(tempPathL, tempPathR, 15, 30)
+SSD.my_ssd(tempPathL, tempPathR, 15, 30, Composition)
 cv2.waitKey(0)
 cv2.destroyAllWindows()
 
