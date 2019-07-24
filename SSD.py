@@ -12,9 +12,18 @@ def my_ssd(left_image, right_image, kernel, max_offset,compostion):
     depth.shape = h, w
     kernel_half = int(kernel/2)
     offset_adjust = 255 / max_offset
-    for i in range(0,len(compostion)):
+    print("the length of composition is ",len(compostion) )
+    temp_string = "the size of image is: row={} and column={}."
+    print(temp_string.format(h , w))
+    temp_mean = np.zeros(len(compostion))
+    temp_var = np.zeros(len(compostion))
+    temp_depth = []
+    for i in range(0,len(compostion)-8):
+        temp_depth.append([])
+        print(len(compostion[i]))
         for j in range(0, len(compostion[i])):
-            if compostion[i][j][0]<(h-kernel_half)& kernel_half < compostion[i][j][0]& compostion[i][j][1]<(w-kernel_half)& kernel_half < compostion[i][j][1]:
+            if compostion[i][j][0]<(h-kernel_half)and kernel_half < compostion[i][j][0]and compostion[i][j][1]<(w-kernel_half)and kernel_half < compostion[i][j][1]:
+                #print("test")
                 ssd_reserved = 65534
                 best_offset = 0
                 for offset in range(max_offset):
@@ -27,5 +36,15 @@ def my_ssd(left_image, right_image, kernel, max_offset,compostion):
                         ssd_reserved = ssd
                         best_offset = offset
                 depth[compostion[i][j][0], compostion[i][j][1]] = best_offset * offset_adjust
-
+                temp_depth[i].append([])
+                temp_depth[i][j] = best_offset
+        # print(temp_depth[i])
+        temp_mean[i] = np.mean(temp_depth[i])
+        temp_var[i] = np.var(temp_depth[i])
+        print(temp_mean[i])
+        print(temp_var[i])
+    print("The code is before writing image.")
     Image.fromarray(depth).save('depth.png')
+    print("very thing is done.")
+    return [temp_mean, temp_var]
+
