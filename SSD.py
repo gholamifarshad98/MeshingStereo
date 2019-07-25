@@ -18,26 +18,24 @@ def my_ssd(left_image, right_image, kernel, max_offset,compostion):
     temp_mean = np.zeros(len(compostion))
     temp_var = np.zeros(len(compostion))
     temp_depth = []
-    for i in range(0,len(compostion)-8):
+    for i in range(0,len(compostion)):
         temp_depth.append([])
         print(len(compostion[i]))
         for j in range(0, len(compostion[i])):
-            if compostion[i][j][0]<(h-kernel_half)and kernel_half < compostion[i][j][0]and compostion[i][j][1]<(w-kernel_half)and kernel_half < compostion[i][j][1]:
-                #print("test")
-                ssd_reserved = 65534
-                best_offset = 0
-                for offset in range(max_offset):
-                    ssd = 0
-                    for v in range(-kernel_half, kernel_half):
-                        for u in range(-kernel_half, kernel_half):
-                            ssd_temp = int(left[(compostion[i][j][0] + v), (compostion[i][j][1] + u)]) - int(right[(compostion[i][j][0] + v), ((compostion[i][j][1] + u) - offset)])
-                            ssd += ssd_temp * ssd_temp
-                    if ssd < ssd_reserved:
-                        ssd_reserved = ssd
-                        best_offset = offset
-                depth[compostion[i][j][0], compostion[i][j][1]] = best_offset * offset_adjust
-                temp_depth[i].append([])
-                temp_depth[i][j] = best_offset
+            ssd_reserved = 65534
+            best_offset = 0
+            for offset in range(max_offset):
+                ssd = 0
+                for v in range(-kernel_half, kernel_half):
+                    for u in range(-kernel_half, kernel_half):
+                        ssd_temp = int(left[(compostion[i][j][0] + v), (compostion[i][j][1] + u)]) - int(right[(compostion[i][j][0] + v), ((compostion[i][j][1] + u) - offset)])
+                        ssd += ssd_temp * ssd_temp
+                if ssd < ssd_reserved:
+                    ssd_reserved = ssd
+                    best_offset = offset
+            depth[compostion[i][j][0], compostion[i][j][1]] = best_offset * offset_adjust
+            temp_depth[i].append([])
+            temp_depth[i][j] = best_offset
         # print(temp_depth[i])
         temp_mean[i] = np.mean(temp_depth[i])
         temp_var[i] = np.var(temp_depth[i])

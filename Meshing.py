@@ -7,21 +7,31 @@ def calculate_distance(r, c):
 
 
 def calculate_layer(distance, thickness):
-    return int(distance/thickness)+1
+    return int(distance/thickness)
 
 
-def meshing(NumOfRow, NumOfColumn, NumOfThickness):
-    NumOfLayer = int(math.sqrt(NumOfRow ** 2 + (NumOfColumn / 2) ** 2) / NumOfThickness) +2
-    print("the NumOfLayer is ",NumOfLayer)
+def meshing(NumOfRow, NumOfColumn, NumOfThickness,kernelSize, maxOffset):
+    allowableRow = [i for i in range(int(kernelSize / 2), NumOfRow - int(kernelSize / 2)-2)]
+    allowableColumn = [i for i in range(int(kernelSize / 2), NumOfColumn - maxOffset - int(kernelSize / 2)-2)]
+    print(allowableRow)
+    print(allowableColumn)
+    NumOfLayer = int(math.sqrt((NumOfRow-kernelSize) ** 2 + ((NumOfColumn-kernelSize) / 2) ** 2) / NumOfThickness)+1
+    print(NumOfLayer)
+    print("the NumOfLayer is ", NumOfLayer)
     tempMatrix = numpy.zeros((NumOfRow, NumOfColumn))
-    CompositionList = []
-    for n in range(1, NumOfLayer):
-        CompositionList.append([])
-        #print(CompositionList)
-    for i in range(0, NumOfRow):
-        for j in range(0, NumOfColumn):
+    compositionList = []
+    for n in range(0, NumOfLayer):
+        compositionList.append([])
+        # print(CompositionList)
+    for i in allowableRow:
+        for j in allowableColumn:
+            print((i,j))
             tempDistance = calculate_distance((NumOfRow-1-i), (NumOfColumn/2-0.5-j))
+            # print(tempDistance)
             tempLayer = calculate_layer(tempDistance, NumOfThickness)
             tempMatrix[i][j] = tempLayer
-            CompositionList[int(tempLayer)-1].append((i, j))
-    return [tempMatrix,CompositionList]
+            # print(tempLayer)
+            # print(compositionList)
+            # print(len(compositionList))
+            compositionList[int(tempLayer)-1].append((i, j))
+    return [tempMatrix, compositionList]

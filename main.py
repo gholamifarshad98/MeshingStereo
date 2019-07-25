@@ -7,7 +7,9 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 from mpl_toolkits.mplot3d import Axes3D
 
-
+kernelSize = 15
+maxOffset = 30
+thicknessOfLayers = 30
 currPath = os.getcwd()
 changPath = "\\data\\"
 currPath = currPath+changPath
@@ -25,9 +27,8 @@ try:
 except IOError:
     print("the program cant open your image")
     print("every things are done")
-
-
-[MeshingArray, Composition] = Meshing.meshing(354, 400, 30)
+height, width = imgL.shape
+[MeshingArray, Composition] = Meshing.meshing(height, width, thicknessOfLayers, kernelSize, maxOffset)
 x = np.arange(0, 400)
 y = np.arange(0, 354)
 (x, y) = np.meshgrid(x, y)
@@ -36,7 +37,7 @@ fig = plt.figure()
 ax = Axes3D(fig)
 ax.plot_surface(x, y, z, rstride=1, cstride=1, cmap=cm.viridis)
 print("hello before go to my_ssd function.")
-[temp_mean, temp_var] = SSD.my_ssd(tempPathL, tempPathR, 15, 30, Composition)
+[temp_mean, temp_var] = SSD.my_ssd(tempPathL, tempPathR, kernelSize, maxOffset, Composition)
 print("hello after go to my_ssd function.")
 plt.show()
 cv2.waitKey(0)
